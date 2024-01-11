@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.mapper.FocuslistMapper">
+
+    <resultMap id="BaseResultMap" type="com.atguigu.pojo.Focuslist">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="focusId" column="focus_id" jdbcType="INTEGER"/>
+            <result property="houseId" column="house_id" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,focus_id,house_id,
+    </sql>
+</mapper>

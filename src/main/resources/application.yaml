@@ -1,0 +1,66 @@
+# server配置
+server:
+  session:
+    timeout:60*5
+  port: 8080
+  servlet:
+
+    context-path: /
+
+# 连接池配置
+spring:
+
+  profiles:
+    active: default
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      url: jdbc:mysql:///house
+      username: root
+      password: root
+      driver-class-name: com.mysql.cj.jdbc.Driver
+  mail:
+    host: smtp.qq.com
+    port: 587
+    username: 3458821194@qq.com
+    password: dkxjjphucjundcaj
+    default-encoding: UTF-8
+    properties:
+      mail:
+        debug: true
+        smtp:
+          socketFactory:
+            class: javax.net.ssl.SSLSocketFactory
+            #smtp服务器的地址
+
+            #qq邮件的端口号
+
+            #发邮件的用户名，是自己的qq邮件
+
+            #是自己通过qq申请的授权码
+
+            #qq邮箱的编码格式
+
+            #连接加密的工具类
+
+            #会把发送邮件的整个过程在控制台打印出来
+
+
+# mybatis-plus的配置
+mybatis-plus:
+  type-aliases-package: com.atguigu.pojo
+  global-config:
+    db-config:
+      logic-delete-field: isDeleted  #全局逻辑删除
+      id-type: auto #主键策略自增长
+
+
+
+#jwt配置
+jwt:
+  token:
+    tokenExpiration: 60 #有效时间,单位分钟
+    tokenSignKey: headline123456  #当前程序签名秘钥 自定义
+
+
+

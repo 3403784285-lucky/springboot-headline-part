@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.mapper.OrderSkuMapper">
+
+    <resultMap id="BaseResultMap" type="com.atguigu.pojo.OrderSku">
+            <id property="orderSkuId" column="order_sku_id" jdbcType="INTEGER"/>
+            <result property="orderSpuId" column="order_spu_id" jdbcType="INTEGER"/>
+            <result property="orderBadTime" column="order_bad_time" jdbcType="TIMESTAMP"/>
+            <result property="orderCreateTime" column="order_create_time" jdbcType="TIMESTAMP"/>
+            <result property="orderEndTime" column="order_end_time" jdbcType="TIMESTAMP"/>
+            <result property="skuId" column="sku_id" jdbcType="INTEGER"/>
+            <result property="totalPrice" column="total_price" jdbcType="DECIMAL"/>
+            <result property="userId" column="user_id" jdbcType="INTEGER"/>
+            <result property="orderStatus" column="order_status" jdbcType="VARCHAR"/>
+            <result property="description" column="description" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        order_sku_id,order_spu_id,order_time_length,
+        order_create_time,order_end_time,sku_id,total_price,user_id,order_status,description,
+    </sql>
+
+</mapper>
