@@ -2,6 +2,9 @@ package com.atguigu.mapper;
 
 import com.atguigu.pojo.Sku;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 /**
 * @author zplaz
@@ -11,7 +14,11 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 */
 public interface SkuMapper extends BaseMapper<Sku> {
 
+        @Select("select * from sku,spu where sku.spu_id=spu.spu_id")
+        List<Sku> getDetail();
 
+        @Select("select * from sku,spu where sku.spu_id=spu.spu_id and sku.sku_id=#{skuId}")
+        Sku selectDetailById(int skuId);
 }
 
 

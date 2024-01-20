@@ -65,4 +65,18 @@ public class HouseController {
         return result;
     }
 
+    @PostMapping("certain")
+    public Result houseCertain(@RequestBody OrderSku orderSku){
+        System.out.println(orderSku);
+        int skuId=orderSku.getSkuId();
+        Result result = skuService.houseCertain(skuId);
+        return result;
+    }
+
+    @PostMapping("declare")
+    public Result declare(@RequestBody Map map){
+        System.out.println(map+"嘿嘿");
+        Result result = skuService.declare(map);
+        return result;
+    }
 }

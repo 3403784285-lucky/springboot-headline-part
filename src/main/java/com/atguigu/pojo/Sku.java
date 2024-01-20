@@ -15,9 +15,13 @@ import org.springframework.core.SpringVersion;
 @TableName(value ="sku")
 @Data
 public class Sku implements Serializable {
+    @TableId(value = "sku_id", type = IdType.AUTO)
     private Integer skuId;
 
     private Integer spuId;
+
+    @TableField(exist = false)
+    private String houseName;
 
     private Double houseSize;
 
@@ -32,6 +36,8 @@ public class Sku implements Serializable {
     private String houseOnto;
 
     private String housePic;
+
+    private String houseCity;
 
     private String unitType;
 

@@ -8,11 +8,12 @@ public enum ResultCodeEnum {
 
     SUCCESS(200,"success"),
     USERNAME_ERROR(501,"usernameError"),
-    PASSWORD_ERROR(503,"passwordError"),
+    PASSWORD_ERROR(503,"error"),
     NOTLOGIN(504,"notLogin"),
     USERNAME_USED(505,"userNameUsed"),
-
-    CONFIRM_ERROR(506,"confirmError");
+    CONFIRM_ERROR(506,"confirmError"),
+    BALANCE_LESS(507,"fail"),
+    ORDER_EXP(508,"time");
 
 
 

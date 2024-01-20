@@ -14,6 +14,7 @@
             <result property="houseStatus" column="house_status" jdbcType="VARCHAR"/>
             <result property="houseOnto" column="house_onto" jdbcType="VARCHAR"/>
             <result property="housePic" column="house_pic" jdbcType="VARCHAR"/>
+            <result property="houseCity" column="house_city" jdbcType="VARCHAR"/>
             <result property="unitType" column="unit_type" jdbcType="INTEGER"/>
 
     </resultMap>
@@ -21,6 +22,6 @@
     <sql id="Base_Column_List">
         sku_id,spu_id,house_size,
         house_type,house_price,house_position,
-        house_status,house_onto,house_pic,unit_type,
+        house_status,house_onto,house_pic,unit_type,house_city,
     </sql>
 </mapper>

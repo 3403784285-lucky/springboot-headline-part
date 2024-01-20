@@ -22,4 +22,16 @@ public class OtherServiceImpl implements OtherService {
         return Result.ok(orders);
 
     }
+
+    @Override
+    public Result searchDoing(int userId) {
+        List<OrderSku> orders=otherMapper.searchDoing(userId);
+        return Result.ok(orders);
+    }
+
+    @Override
+    public Result searchFinish(int userId) {
+        List<OrderSku> orders=otherMapper.searchFinish(userId);
+        return Result.ok(orders);
+    }
 }

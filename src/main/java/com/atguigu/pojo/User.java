@@ -27,5 +27,8 @@ public class User implements Serializable {
 
     private BigDecimal possession;
 
+
+    private BigDecimal balance;
+
     private static final long serialVersionUID = 1L;
 }

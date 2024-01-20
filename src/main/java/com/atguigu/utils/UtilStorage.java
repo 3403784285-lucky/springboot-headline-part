@@ -10,9 +10,9 @@ public class UtilStorage {
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             public void run() {
-                confirm=null;
+                confirm="#";
             }
-        }, 6000*5);
+        }, 60000*5);
     }
 
 }

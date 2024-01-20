@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Map;
 
@@ -92,6 +93,55 @@ public class UserController {
             Result result = otherService.searchUnPay(userId);
             return result;
         }
+
+                @PostMapping("doing")
+                public Result searchDoing(@RequestBody Map map){
+                    Integer userId=(Integer) map.get("userId");
+                    Result result = otherService.searchDoing(userId);
+                    return result;
+                }
+
+                @PostMapping("finish")
+                public Result searchFinish(@RequestBody Map map){
+                    Integer userId=(Integer) map.get("userId");
+                    Result result = otherService.searchFinish(userId);
+                    return result;
+                }
+
+                @PostMapping("return")
+                public Result userReturn(@RequestBody OrderSku orderSku){
+                    System.out.println(orderSku);
+                    Result result = userService.userReturn(orderSku);
+                    return result;
+                }
+
+                @PostMapping("delete")
+                public Result userDelete(@RequestBody OrderSku orderSku){
+                    System.out.println(orderSku);
+                    int orderSkuId=orderSku.getOrderSkuId();
+                    Result result = userService.userDelete(orderSkuId);
+                    return result;
+                }
+
+
+
+                //获取用户余额
+                @PostMapping("allowance")
+                public Result getAllowance(@RequestBody Map map){
+                    int userId=(int)map.get("userId");
+                    Result result = userService.getAllowance(userId);
+                    return result;
+                }
+
+
+                @PostMapping("pay")
+                public Result toPay(@RequestBody Map map){
+                    System.out.println("dfdsf");
+                    System.out.println("map = " + map.get("orderSkuId"));
+                    Result result = userService.pay((int)map.get("userId"),(String) map.get("password"),new BigDecimal((int)map.get("totalPrice")),(int)map.get("orderSkuId"));
+                    return result;
+                }
+
 
 
 

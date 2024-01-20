@@ -5,6 +5,7 @@ import com.atguigu.utils.Result;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
+import java.util.Map;
 
 /**
 * @author zplaz
@@ -15,5 +16,7 @@ public interface SkuService extends IService<Sku> {
     public Result getHouseDetail();
 
 
+    Result houseCertain(int skuId);
 
+    Result declare(Map map);
 }

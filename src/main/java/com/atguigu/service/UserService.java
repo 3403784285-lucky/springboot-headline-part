@@ -1,10 +1,13 @@
 package com.atguigu.service;
 
+import com.atguigu.pojo.OrderSku;
 import com.atguigu.pojo.User;
 import com.atguigu.utils.Result;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import org.springframework.mail.javamail.JavaMailSender;
+
+import java.math.BigDecimal;
 
 
 /**
@@ -25,5 +28,11 @@ public interface UserService extends IService<User> {
 
     Result getConfirm(JavaMailSender javaMailSender, String email);
 
+    Result userReturn(OrderSku orderSku);
 
+    Result userDelete(int orderSkuId);
+
+    Result getAllowance(int userId);
+
+    Result pay(int userId, String password, BigDecimal totalPrice,int orderSkuId);
 }

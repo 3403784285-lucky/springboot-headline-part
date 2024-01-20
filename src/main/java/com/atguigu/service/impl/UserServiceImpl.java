@@ -1,6 +1,8 @@
 package com.atguigu.service.impl;
 
 import com.alibaba.druid.util.StringUtils;
+import com.atguigu.mapper.OrderSkuMapper;
+import com.atguigu.pojo.OrderSku;
 import com.atguigu.utils.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -8,10 +10,14 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.atguigu.pojo.User;
 import com.atguigu.service.UserService;
 import com.atguigu.mapper.UserMapper;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.security.URIParameter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +33,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     implements UserService{
     @Autowired(required = false)
     private  UserMapper userMapper;
+    @Autowired(required = false)
+    private OrderSkuMapper orderSkuMapper;
 
 
 
@@ -39,8 +47,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
      *    2.如果用户对象为null， 查询失败 ， 账号错误 ！ 501
      *    3.对比，密码，失败 返回503错误
      *    4.根据用户id生成一个token， token -> result 返回
-     * @param user
-     * @return
+     *
      */
     @Override
     public Result login(Long id,String password) {
@@ -58,16 +65,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
         // 对比密码
         if(!StringUtils.isEmpty(password)  && MD5Util.encrypt(password).equals(loginUser.getPassword())){
-
             //登录成功
             // 根据用户id生成 token
             String token = jwtHelper.createToken(Long.valueOf(loginUser.getId()));
             System.out.println("token = " + token);
             Map data = new HashMap();
-
-
             data.put("token",token);
             data.put("userId",id);
+            data.put("email",loginUser.getEmail());
 
             System.out.println("哈哈哈");
             return Result.ok(data);
@@ -87,9 +92,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     public Result getUserInfo(String token) {
 
         //是否过期
-
         boolean expiration = jwtHelper.isExpiration(token);
-
         if(expiration){
             //失败 ，未登录
             return Result.build(null,ResultCodeEnum.NOTLOGIN);
@@ -136,10 +139,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
      *  2.密码加密处理
      *  3.账号数据保存
      *  4.返回结果
-     * @param user
-     * @return
+     *
      */
-
 
     @Override
     public Result regist(String email,String password,String rePassword,String confirm) {
@@ -183,7 +184,69 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     }
 
+    @Override
+    public Result userReturn(OrderSku orderSku) {
+       orderSku.setOrderStatus("-2");
+       System.out.println(orderSkuMapper.updateById(orderSku));
+       return Result.ok(null);
+    }
 
+
+
+//    @Override
+//    public Result userReturnApplied(OrderSku orderSku) {
+//        User user=((User)(userMapper.selectById(orderSku.getUserId())));
+//        BigDecimal balance=user.getBalance().add(orderSku.getTotalPrice());
+//        user.setBalance(balance);
+//        userMapper.updateById(user);
+//        return Result.ok(null);
+//
+//    }
+
+    @Override
+    public Result userDelete(int orderSkuId) {
+        System.out.println(orderSkuId);
+        System.out.println(orderSkuMapper.deleteById(orderSkuId));
+        return  Result.ok(null);
+    }
+
+    @Override
+    public Result getAllowance(int userId) {
+        User user=userMapper.selectById(userId);
+        return  Result.ok(user.getBalance());
+
+    }
+
+    @Override
+    public Result pay(int userId,String password,BigDecimal totalPrice,int orderSkuId) {
+        User user=userMapper.selectById(userId);
+        OrderSku orderSku1=orderSkuMapper.selectById(orderSkuId);
+        System.out.println(orderSkuId);
+        if(orderSku1.getOrderStatus()!="-2"){
+            System.out.println(password+"--->"+MD5Util.encrypt(password));
+            if (MD5Util.encrypt(password).equals(user.getPassword())){
+                if(user.getBalance().compareTo(totalPrice)==0||user.getBalance().compareTo(totalPrice)==1){
+                    UpdateWrapper<User> updateWrapper=new UpdateWrapper<>();
+                    BigDecimal h=user.getBalance().subtract(totalPrice);
+                    User user1=new User();
+                    user1.setBalance(h);
+                    updateWrapper.eq("id",userId);
+                    userMapper.update(user1, updateWrapper);
+
+
+                 return  Result.build(null,ResultCodeEnum.SUCCESS);
+                }else{
+                    return  Result.build(null,ResultCodeEnum.BALANCE_LESS);
+                }
+            }
+            else{
+                return  Result.build(null,ResultCodeEnum.PASSWORD_ERROR);
+
+            }
+        }else{
+            return  Result.build(null,ResultCodeEnum.ORDER_EXP);
+        }
+    }
 
 
 }

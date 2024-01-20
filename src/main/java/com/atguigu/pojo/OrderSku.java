@@ -42,6 +42,8 @@ public class OrderSku implements Serializable {
 
     private String description;
 
+    @TableField(exist = false)
+    private String password;
 
     private static final long serialVersionUID = 1L;
 }
