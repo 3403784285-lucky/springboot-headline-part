@@ -6,7 +6,10 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.math.BigDecimal;
+
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.core.SpringVersion;
 
 /**
@@ -14,6 +17,8 @@ import org.springframework.core.SpringVersion;
  */
 @TableName(value ="sku")
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Sku implements Serializable {
     @TableId(value = "sku_id", type = IdType.AUTO)
     private Integer skuId;
@@ -40,6 +45,8 @@ public class Sku implements Serializable {
     private String houseCity;
 
     private String unitType;
+
+    private int houseOwner;
 
 
 

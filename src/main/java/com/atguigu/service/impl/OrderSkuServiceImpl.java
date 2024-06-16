@@ -1,13 +1,16 @@
 package com.atguigu.service.impl;
 
-import com.atguigu.mapper.GoodsMapper;
+import com.atguigu.mapper.*;
+import com.atguigu.pojo.Appoint;
+import com.atguigu.pojo.Sku;
 import com.atguigu.utils.Result;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.atguigu.pojo.OrderSku;
 import com.atguigu.service.OrderSkuService;
-import com.atguigu.mapper.OrderSkuMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +28,15 @@ public class OrderSkuServiceImpl extends ServiceImpl<OrderSkuMapper, OrderSku>
 
     @Autowired(required = false)
     private OrderSkuMapper orderSkuMapper;
+
+    @Autowired(required = false)
+    private SkuMapper skuMapper;
+
+
+    @Autowired(required = false)
+    private AppointMapper appointMapper;
+
+
     public Result insertPreview(OrderSku order)
     {
         orderSkuMapper.insert(order);
@@ -32,14 +44,21 @@ public class OrderSkuServiceImpl extends ServiceImpl<OrderSkuMapper, OrderSku>
 
     }
 
-    public Result judgeOrderPreview(OrderSku order)
-    {
-        QueryWrapper queryWrapper=new QueryWrapper();
+    public Result judgeOrderPreview(int skuId) {
+        QueryWrapper<OrderSku> queryWrapper = new QueryWrapper<>();
         queryWrapper.gt("order_end_time", LocalDateTime.now());
-        queryWrapper.ne("order_status","-1");
-        List<OrderSku> orderSkus=orderSkuMapper.selectList(queryWrapper);
+        queryWrapper.eq("sku_id",skuId);
+        queryWrapper.and(wrapper -> wrapper.eq("order_status", "1").or().eq("order_status", "0"));
+        List<OrderSku> orderSkus = orderSkuMapper.selectList(queryWrapper);
         return Result.ok(orderSkus);
+    }
 
+
+    @Override
+    public Result allPreview() {
+        QueryWrapper<OrderSku>queryWrapper=new QueryWrapper<>();
+        queryWrapper.eq("order_status","1").lt("order_end_time",LocalDateTime.now());
+        return Result.ok(orderSkuMapper.selectList(null));
     }
 
     @Override
@@ -57,6 +76,67 @@ public class OrderSkuServiceImpl extends ServiceImpl<OrderSkuMapper, OrderSku>
 
     }
 
+    @Override
+    public Result managePreview(Page<OrderSku>page) {
+        IPage<OrderSku>pageOrderSku =orderSkuMapper.selectPreviews(page);
+        return Result.ok(pageOrderSku);
+    }
+
+    @Override
+    public Result appointSearch() {
+        QueryWrapper<Appoint>queryWrapper=new QueryWrapper<>();
+        queryWrapper.ne("work_status",1);
+        appointMapper.selectList(queryWrapper);
+        return null;
+    }
+
+    @Override
+    public Result appoint(int houseId,int workerId) {
+        Appoint appoint=new Appoint();
+        appoint.setWorkerId(workerId);
+        appoint.setWorkStatus(0);
+        appointMapper.updateById(appoint);
+        return Result.ok(null);
+
+    }
+
+
+    @Override
+    public Result uploadHouse(int houseId) {
+        Sku sku=new Sku();
+        sku.setHouseStatus("1");
+        sku.setSkuId(houseId);
+        skuMapper.updateById(sku);
+        return Result.ok(null);
+    }
+
+    @Override
+    public Result takeOffHouse(int houseId) {
+        Sku sku=new Sku();
+        sku.setHouseStatus("0");
+        sku.setSkuId(houseId);
+        skuMapper.updateById(sku);
+        return Result.ok(null);
+    }
+
+
+
+    @Override
+    public Result editHouse(Sku sku) {
+        skuMapper.updateById(sku);
+        return Result.ok(null);
+    }
+
+    @Override
+    public Result askOrder(int userId) {
+        QueryWrapper<OrderSku> queryWrapper=new QueryWrapper();
+        queryWrapper.eq("user_id",userId);
+        queryWrapper.and(wrapper -> wrapper.eq("order_status", "1").or().eq("order_status", "0"));
+        List<OrderSku> orders=orderSkuMapper.selectList(queryWrapper);
+        return Result.ok(orders);
+    }
+
+
 
     public Result readOrder(int id)
     {
@@ -65,6 +145,9 @@ public class OrderSkuServiceImpl extends ServiceImpl<OrderSkuMapper, OrderSku>
         List<OrderSku> orders=orderSkuMapper.selectList(queryWrapper);
         return Result.ok(orders);
     }
+
+
+
 
 }
 

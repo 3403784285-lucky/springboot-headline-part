@@ -11,4 +11,6 @@ public interface OtherService {
     Result searchDoing(int userId);
 
     Result searchFinish(int userId);
+
+    Result getCancel(int userId);
 }

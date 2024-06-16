@@ -13,6 +13,6 @@
 
     <sql id="Base_Column_List">
         order_goods_id,order_spu_id,reserve_price,
-        sku_id,
+        sku_id
     </sql>
 </mapper>

@@ -6,6 +6,8 @@ import com.atguigu.pojo.OrderSku;
 import com.atguigu.utils.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.atguigu.pojo.User;
 import com.atguigu.service.UserService;
@@ -18,10 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.security.URIParameter;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 /**
 * @author zplaz
@@ -56,6 +55,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         System.out.println(id+"-->"+password);
         LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(User::getId,id);
+        lambdaQueryWrapper.ne(User::getStatus,"-1");
         User loginUser = userMapper.selectOne(lambdaQueryWrapper);
         System.out.println(loginUser);
 
@@ -73,6 +73,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             data.put("token",token);
             data.put("userId",id);
             data.put("email",loginUser.getEmail());
+            data.put("nickname",loginUser.getNickname());
+            data.put("userPic",loginUser.getUserPic());
 
             System.out.println("哈哈哈");
             return Result.ok(data);
@@ -153,6 +155,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
         user.setPassword(MD5Util.encrypt(password));
         user.setEmail(email);
+        user.setStatus("0");
 
 
 
@@ -193,15 +196,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
 
 
-//    @Override
-//    public Result userReturnApplied(OrderSku orderSku) {
-//        User user=((User)(userMapper.selectById(orderSku.getUserId())));
-//        BigDecimal balance=user.getBalance().add(orderSku.getTotalPrice());
-//        user.setBalance(balance);
-//        userMapper.updateById(user);
-//        return Result.ok(null);
-//
-//    }
+    @Override
+    public Result userReturnApplied(OrderSku orderSku) {
+        User user=((User)(userMapper.selectById(orderSku.getUserId())));
+        BigDecimal balance=user.getBalance().add(orderSku.getTotalPrice());
+        user.setBalance(balance);
+        userMapper.updateById(user);
+        OrderSku orderSku1=new OrderSku();
+        orderSku1.setOrderSkuId(orderSku.getOrderSkuId());
+        orderSku1.setOrderStatus("-3");
+        orderSkuMapper.updateById(orderSku1);
+        return Result.ok(null);
+
+    }
 
     @Override
     public Result userDelete(int orderSkuId) {
@@ -222,7 +229,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         User user=userMapper.selectById(userId);
         OrderSku orderSku1=orderSkuMapper.selectById(orderSkuId);
         System.out.println(orderSkuId);
-        if(orderSku1.getOrderStatus()!="-2"){
+        if(orderSku1.getOrderStatus()!="-1"){
             System.out.println(password+"--->"+MD5Util.encrypt(password));
             if (MD5Util.encrypt(password).equals(user.getPassword())){
                 if(user.getBalance().compareTo(totalPrice)==0||user.getBalance().compareTo(totalPrice)==1){
@@ -232,6 +239,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
                     user1.setBalance(h);
                     updateWrapper.eq("id",userId);
                     userMapper.update(user1, updateWrapper);
+                    UpdateWrapper<OrderSku> updateWrapperOrder = new UpdateWrapper<>();
+                    updateWrapperOrder.set("order_status", 1) // 设置要更新的字段及值
+                            .eq("order_sku_id", orderSkuId); // 设置更新条件，这里假设 id 是主键
+                    // 执行更新操作
+                    orderSkuMapper.update(null, updateWrapperOrder);
 
 
                  return  Result.build(null,ResultCodeEnum.SUCCESS);
@@ -247,6 +259,34 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             return  Result.build(null,ResultCodeEnum.ORDER_EXP);
         }
     }
+
+    @Override
+    public Result manageUser(Page<User>page) {
+        IPage<User>userIPage =userMapper.selectPage(page,null);
+        return Result.ok(userIPage);
+    }
+
+    @Override
+    public Result freeze(int userId) {
+        User user=new User();
+        user.setId(userId);
+        user.setStatus("-1");
+        userMapper.updateById(user);
+        return Result.ok(null);
+
+
+    }
+
+    @Override
+    public Result unfreeze(int userId) {
+        User user=new User();
+        user.setId(userId);
+        user.setStatus("0");
+        userMapper.updateById(user);
+        return Result.ok(null);
+    }
+
+
 
 
 }

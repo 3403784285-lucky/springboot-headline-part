@@ -9,7 +9,6 @@ server:
 
 # 连接池配置
 spring:
-
   profiles:
     active: default
   datasource:
@@ -45,7 +44,6 @@ spring:
 
             #会把发送邮件的整个过程在控制台打印出来
 
-
 # mybatis-plus的配置
 mybatis-plus:
   type-aliases-package: com.atguigu.pojo
@@ -53,6 +51,9 @@ mybatis-plus:
     db-config:
       logic-delete-field: isDeleted  #全局逻辑删除
       id-type: auto #主键策略自增长
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 
 

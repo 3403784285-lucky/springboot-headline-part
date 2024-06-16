@@ -45,5 +45,8 @@ public class OrderSku implements Serializable {
     @TableField(exist = false)
     private String password;
 
+    @JsonFormat(timezone = "GMT+8",pattern = "yyyy/MM/dd HH:mm:ss")
+    private Date orderOverTime;
+
     private static final long serialVersionUID = 1L;
 }

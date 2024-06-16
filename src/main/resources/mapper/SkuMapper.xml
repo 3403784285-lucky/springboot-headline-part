@@ -16,12 +16,106 @@
             <result property="housePic" column="house_pic" jdbcType="VARCHAR"/>
             <result property="houseCity" column="house_city" jdbcType="VARCHAR"/>
             <result property="unitType" column="unit_type" jdbcType="INTEGER"/>
+            <result property="houseOwner" column="house_owner" jdbcType="INTEGER"/>
 
     </resultMap>
 
     <sql id="Base_Column_List">
         sku_id,spu_id,house_size,
         house_type,house_price,house_position,
-        house_status,house_onto,house_pic,unit_type,house_city,
+        house_status,house_onto,house_pic,unit_type,house_city,house_owner,
     </sql>
+    <!-- 在 XML 配置文件中定义 SQL 语句 -->
+
+    <select id="searchByKey" resultType="com.atguigu.pojo.Sku">  SELECT *
+        FROM sku, spu
+        WHERE sku.spu_id = spu.spu_id
+        <if test="keySmall != null and keySmall != ''">
+            AND house_city = #{keySmall}
+        </if>
+        <if test="keyBig != null and keyBig != ''">
+            AND CONCAT(house_name, house_city) LIKE CONCAT('%', #{keyBig}, '%')
+        </if>
+    </select>
+
+    <select id="searchOption" resultType="com.atguigu.pojo.Sku">
+        SELECT *
+        FROM sku, spu
+        WHERE sku.spu_id = spu.spu_id
+
+        <!-- search1 的条件 -->
+        <if test="search1 != null and search1 != 0">
+            <choose>
+                <when test="search1 == 50">
+                    AND house_size &lt; 50
+                </when>
+                <when test="search1 == 70">
+                    AND house_size &gt;= 50 AND house_size &lt; 70
+                </when>
+                <when test="search1 == 90">
+                    AND house_size &gt;= 70 AND house_size &lt; 90
+                </when>
+                <when test="search1 == 120">
+                    AND house_size &gt;= 90 AND house_size &lt; 120
+                </when>
+                <when test="search1 == 150">
+                    AND house_size &gt;= 120 AND house_size &lt; 150
+                </when>
+                <otherwise>
+                    AND house_size &gt;= 150 AND house_size &lt; 200
+                </otherwise>
+            </choose>
+        </if>
+
+        <!-- search2 的条件 -->
+        <if test="search2 != null and search2 != 0">
+            <choose>
+                <when test="search2 == 100">
+                    AND house_price &lt; 100
+                </when>
+                <when test="search2 == 150">
+                    AND house_price &gt;= 100 AND house_price &lt; 150
+                </when>
+                <when test="search2 == 200">
+                    AND house_price &gt;= 150 AND house_price &lt; 200
+                </when>
+                <when test="search2 == 250">
+                    AND house_price &gt;= 200 AND house_price &lt; 250
+                </when>
+                <when test="search2 == 300">
+                    AND house_price &gt;= 250 AND house_price &lt; 300
+                </when>
+                <otherwise>
+                    AND house_price &gt;= 300 AND house_price &lt; 500
+                </otherwise>
+            </choose>
+        </if>
+
+        <!-- search3 的条件 -->
+        <if test="search3 != null and search3 != 0">
+            <choose>
+                <when test="search3 == 1">
+                    AND unit_type = 1
+                </when>
+                <when test="search3 == 2">
+                    AND unit_type = 2
+                </when>
+                <when test="search3 == 3">
+                    AND unit_type = 3
+                </when>
+                <when test="search3 == 4">
+                    AND unit_type = 4
+                </when>
+                <when test="search3 == 5">
+                    AND unit_type = 5
+                </when>
+                <otherwise>
+                    AND unit_type &gt;= 6
+                </otherwise>
+            </choose>
+        </if>
+    </select>
+
+
+
 </mapper>

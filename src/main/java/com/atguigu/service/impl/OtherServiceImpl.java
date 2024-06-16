@@ -34,4 +34,10 @@ public class OtherServiceImpl implements OtherService {
         List<OrderSku> orders=otherMapper.searchFinish(userId);
         return Result.ok(orders);
     }
+
+    @Override
+    public Result getCancel(int userId) {
+        List<OrderSku> orders=otherMapper.searchCancel(userId);
+        return Result.ok(orders);
+    }
 }

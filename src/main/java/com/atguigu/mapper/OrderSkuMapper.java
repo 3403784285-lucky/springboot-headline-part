@@ -2,6 +2,8 @@ package com.atguigu.mapper;
 
 import com.atguigu.pojo.OrderSku;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
@@ -14,8 +16,8 @@ import java.util.List;
 */
 public interface OrderSkuMapper extends BaseMapper<OrderSku> {
 
-
-
+    @Select("select * from order_sku,sku where order_sku.sku_id=sku.sku_id ")
+    IPage<OrderSku> selectPreviews(Page<OrderSku>page);
 }
 
 

@@ -15,11 +15,13 @@
             <result property="userId" column="user_id" jdbcType="INTEGER"/>
             <result property="orderStatus" column="order_status" jdbcType="VARCHAR"/>
             <result property="description" column="description" jdbcType="VARCHAR"/>
+            <result property="orderOverTime" column="order_over_time" jdbcType="TIMESTAMP"/>
+
     </resultMap>
 
     <sql id="Base_Column_List">
         order_sku_id,order_spu_id,order_time_length,
-        order_create_time,order_end_time,sku_id,total_price,user_id,order_status,description,
+        order_create_time,order_end_time,sku_id,total_price,user_id,order_status,description,order_over_time,
     </sql>
 
 </mapper>

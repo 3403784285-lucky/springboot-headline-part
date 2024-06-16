@@ -67,8 +67,8 @@
             <option name="tableUIInfoList">
               <list>
                 <TableUIInfo>
-                  <option name="className" value="HouseRelation" />
-                  <option name="tableName" value="house_relation" />
+                  <option name="className" value="HouseOrder" />
+                  <option name="tableName" value="house_order" />
                 </TableUIInfo>
               </list>
             </option>

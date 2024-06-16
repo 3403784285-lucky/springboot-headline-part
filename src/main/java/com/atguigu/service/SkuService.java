@@ -2,6 +2,7 @@ package com.atguigu.service;
 
 import com.atguigu.pojo.Sku;
 import com.atguigu.utils.Result;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -19,4 +20,15 @@ public interface SkuService extends IService<Sku> {
     Result houseCertain(int skuId);
 
     Result declare(Map map);
+
+    Result manageHouse(Page<Sku>page);
+
+
+    Result searchUserFocus(int userId);
+
+    Result searchUserDeclare(int userId);
+
+    Result searchByKey(Map map);
+
+    Result searchOption(Map map);
 }

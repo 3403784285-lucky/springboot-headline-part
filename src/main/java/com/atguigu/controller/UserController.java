@@ -10,6 +10,7 @@ import com.atguigu.service.OtherService;
 import com.atguigu.service.UserService;
 import com.atguigu.utils.Result;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +33,9 @@ public class UserController {
 
     @Autowired(required = false)
     private OtherService otherService;
+
+    @Autowired(required = false)
+    private OrderSkuService orderSkuService;
 
     @Autowired
     private FocuslistService focuslistService;
@@ -123,8 +127,12 @@ public class UserController {
                     return result;
                 }
 
-
-
+    @PostMapping("cancelOrder")
+    public Result cancelOrder(@RequestBody Map map){
+        Integer orderSkuId=(Integer) map.get("orderSkuId");
+        Result result = orderSkuService.cancelOrder(orderSkuId+"");
+        return result;
+    }
                 //获取用户余额
                 @PostMapping("allowance")
                 public Result getAllowance(@RequestBody Map map){
@@ -141,6 +149,51 @@ public class UserController {
                     Result result = userService.pay((int)map.get("userId"),(String) map.get("password"),new BigDecimal((int)map.get("totalPrice")),(int)map.get("orderSkuId"));
                     return result;
                 }
+
+
+
+                @PostMapping("manage")
+                public Result manageUser(@RequestBody Map map){
+                    Result result = userService.manageUser(new Page<User>((int)map.get("page"),4));
+                    return result;
+                }
+
+    /**
+     * 冻结用户
+     */
+    @PostMapping("freeze")
+    public Result freeze(@RequestBody Map map){
+        Result result = userService.freeze((int)map.get("userId"));
+        return result;
+    }
+
+    @PostMapping("unfreeze")
+    public Result unfreeze(@RequestBody Map map){
+        Result result = userService.unfreeze((int)map.get("userId"));
+        return result;
+    }
+
+    //退款函数
+    @PostMapping("returnMoney")
+    public Result returnMoney(@RequestBody OrderSku orderSku){
+        Result result = userService. userReturnApplied(orderSku);
+        return result;
+    }
+
+    //查询用户的所有订单
+    @PostMapping("askOrder")
+    public Result askOrder(@RequestBody Map map){
+        Result result = orderSkuService. askOrder((int)map.get("userId"));
+        return result;
+    }
+
+    //搜索已取消或者已经退款的订单
+    @PostMapping("cancel")
+    public Result getCancel(@RequestBody Map map){
+        Result result = otherService. getCancel((int)map.get("userId"));
+        return result;
+    }
+
 
 
 

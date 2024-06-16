@@ -13,6 +13,7 @@ public enum ResultCodeEnum {
     USERNAME_USED(505,"userNameUsed"),
     CONFIRM_ERROR(506,"confirmError"),
     BALANCE_LESS(507,"fail"),
+    FILE_NULL(510,"file_null"),
     ORDER_EXP(508,"time");
 
 

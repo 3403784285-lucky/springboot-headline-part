@@ -27,6 +27,7 @@ public class User implements Serializable {
 
     private BigDecimal possession;
 
+    private String status;
 
     private BigDecimal balance;
 

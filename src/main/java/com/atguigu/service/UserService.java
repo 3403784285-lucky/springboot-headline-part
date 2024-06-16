@@ -3,6 +3,7 @@ package com.atguigu.service;
 import com.atguigu.pojo.OrderSku;
 import com.atguigu.pojo.User;
 import com.atguigu.utils.Result;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import org.springframework.mail.javamail.JavaMailSender;
@@ -35,4 +36,14 @@ public interface UserService extends IService<User> {
     Result getAllowance(int userId);
 
     Result pay(int userId, String password, BigDecimal totalPrice,int orderSkuId);
+
+    Result manageUser(Page<User>page);
+
+    Result freeze(int userId);
+
+    Result unfreeze(int userId);
+
+    Result userReturnApplied(OrderSku orderSku);
+
+
 }
