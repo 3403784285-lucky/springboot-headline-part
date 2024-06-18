@@ -1,6 +1,7 @@
 package com.atguigu.controller;
 
 
+import com.atguigu.mapper.UserMapper;
 import com.atguigu.pojo.Focuslist;
 import com.atguigu.pojo.OrderSku;
 import com.atguigu.pojo.User;
@@ -8,16 +9,20 @@ import com.atguigu.service.FocuslistService;
 import com.atguigu.service.OrderSkuService;
 import com.atguigu.service.OtherService;
 import com.atguigu.service.UserService;
+import com.atguigu.utils.AliOssUtil;
 import com.atguigu.utils.Result;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Map;
+import java.util.UUID;
 
 
 @RestController
@@ -39,6 +44,13 @@ public class UserController {
 
     @Autowired
     private FocuslistService focuslistService;
+
+    @Autowired
+    private AliOssUtil aliOssUtil;
+
+    @Autowired(required = false)
+    private UserMapper userMapper;
+
 
     @PostMapping("login")
     public Result login(@RequestBody Map map){
@@ -190,13 +202,46 @@ public class UserController {
     //搜索已取消或者已经退款的订单
     @PostMapping("cancel")
     public Result getCancel(@RequestBody Map map){
-        Result result = otherService. getCancel((int)map.get("userId"));
+        Result result = otherService.getCancel((int)map.get("userId"));
         return result;
     }
+    @PutMapping("updateInfo")
+    public Result updateById(@RequestBody User user) {
+        userService.updateById(user);
+        return Result.ok(null);
+    }
 
+    /**
+     * 文件上传
+     * @param file
+     * @return
+     */
+    @PutMapping("/upload/{userId}")
+    public Result<String> upload(
+            @RequestParam("file") MultipartFile file,
+            @PathVariable Long userId,
+            @RequestParam("nickname") String nickname,
+            @RequestParam("email") String email) {
 
+        try {
+            // 原始文件名
+            String originalFilename = file.getOriginalFilename();
+            // 截取原始文件名的后缀
+            String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+            // 构造新文件名称
+            String objectName = UUID.randomUUID().toString() + extension;
 
+            // 文件的请求路径
+            String filePath = aliOssUtil.upload(file.getBytes(), objectName);
 
+            // 更新用户信息
+            userMapper.updateUserProfile(userId, nickname, filePath, email);
+            System.out.println("filePath = " + filePath);
+            return Result.ok(filePath);
+        } catch (IOException e) {
+            return Result.build("上传失败");
+        }
+    }
 
 
 
