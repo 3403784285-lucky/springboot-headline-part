@@ -16,8 +16,6 @@ import java.util.Map;
 @RequestMapping("house")
 @CrossOrigin
 public class HouseController {
-
-
     @Autowired
     private SkuService skuService;
 
@@ -32,8 +30,6 @@ public class HouseController {
 
     @Autowired
     private HouseOrderService houseOrderService;
-
-
 
     @Autowired
     private CommentService commentService;
@@ -74,8 +70,6 @@ public class HouseController {
         Result result = orderSkuService.judgeOrderPreview((int)map.get("skuId"));
         return result;
     }
-
-
 
 
     @PostMapping("certain")
