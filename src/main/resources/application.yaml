@@ -14,9 +14,9 @@ spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
-      url: jdbc:mysql:///house
-      username: root
-      password: root
+      url: jdbc:mysql://121.41.107.127:3306/house
+      username: zplzh
+      password: 123456
       driver-class-name: com.mysql.cj.jdbc.Driver
   mail:
     host: smtp.qq.com
