@@ -18,7 +18,6 @@ public class OtherServiceImpl implements OtherService {
     @Override
     public Result searchUnPay(int userId) {
         List<OrderSku> orders=otherMapper.searchUnPay(userId);
-
         return Result.ok(orders);
 
     }

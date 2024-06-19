@@ -2,6 +2,9 @@ package com.atguigu.mapper;
 
 import com.atguigu.pojo.User;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Update;
 
 /**
 * @author zplaz
@@ -10,6 +13,9 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 * @Entity com.atguigu.pojo.User
 */
 public interface UserMapper extends BaseMapper<User> {
+
+    @Update("UPDATE user SET nickname = #{nickname}, user_pic = #{user_pic}, email = #{email} WHERE id = #{userId}")
+    void updateUserProfile(@Param("userId") Long userId, @Param("nickname") String nickname, @Param("user_pic") String user_pic, @Param("email") String email);
 
 }
 
