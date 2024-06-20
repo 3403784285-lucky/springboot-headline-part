@@ -213,7 +213,7 @@ public class UserController {
 
     /**
      * 修改个人信息
-     * @param file
+     * @param f
      * @param userId
      * @param nickname
      * @param email
