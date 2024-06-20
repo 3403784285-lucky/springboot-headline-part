@@ -5,12 +5,14 @@ import com.atguigu.pojo.Sku;
 import com.atguigu.service.*;
 import com.atguigu.utils.OrderAutoEntity;
 import com.atguigu.utils.Result;
+import com.atguigu.vo.UserHouseFocusRatioVO;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.List;
 import java.util.Map;
 @RestController
 @RequestMapping("house")
@@ -39,6 +41,9 @@ public class HouseController {
 
     @Autowired
     private OrderSkuService orderSkuService;
+
+    @Autowired
+    private FocuslistService focuslistService;
 
     @PostMapping("detail")
     public Result getHouseDetail(){
@@ -94,7 +99,7 @@ public class HouseController {
 
     @PostMapping("previewManage")
     public Result managePreview(@RequestBody Map map){
-        Result result = orderSkuService.managePreview(new Page<OrderSku>((int)map.get("page"),4));
+        Result result = orderSkuService.managePreview(new Page<OrderSku>((int)map.get("page"),5));
         return result;
     }
 
@@ -247,5 +252,24 @@ public Result searchOption(@RequestBody Map map){
     return result;
 }
 
+
+    /**
+     * 查询用户房屋关注占比
+     */
+    @GetMapping("/getUserHouseFocusRatio")
+    public Result<List<UserHouseFocusRatioVO>> getUserHouseFocusRatio() {
+        return focuslistService.search();
+    }
+
+
+    /**
+     * 各类房屋订单的占比
+     */
+/*
+    @GetMapping("/getHouseOrderRatio")
+    public Result<List<HouseOrderRatioVO>> getHouseOrderRatio() {
+
+    }
+*/
 
 }
