@@ -15,6 +15,7 @@ import com.atguigu.vo.OrderSkuVO;
 import com.atguigu.vo.OrderSpuVO;
 import com.atguigu.vo.OrderVO;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -104,9 +105,7 @@ public class OrderController {
 
             orderMap.put(category, orderVO);
         }
-
         List<OrderVO> result = new ArrayList<>(orderMap.values());
-
         return Result.ok(result);
     }
 
@@ -122,36 +121,37 @@ public class OrderController {
      *  这五种订单数据 归类
      */
     @GetMapping("/getOrderByStatus")
-    public Result<List<OrderSkuVO>> getOrderByStatus() {
-        List<OrderSku> allOrders = orderSkuMapper.selectList(null);
+    public Result<Page<OrderSkuVO>> getOrderByStatus(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(required = false) String status) {
 
-        Map<String, List<OrderSku>> statusMap = new HashMap<>();
-        statusMap.put("-1", new ArrayList<>());
-        statusMap.put("-2", new ArrayList<>());
-        statusMap.put("-3", new ArrayList<>());
-        statusMap.put("1", new ArrayList<>());
-        statusMap.put("0", new ArrayList<>());
-        statusMap.put("2", new ArrayList<>());
-        Integer count = null;
-        for (OrderSku order : allOrders) {
-            String status = order.getOrderStatus();
-            if (statusMap.containsKey(status)) {
-                statusMap.get(status).add(order);
-            }
+        QueryWrapper<OrderSku> orderSkuQueryWrapper = new QueryWrapper<>();
+        if (status != null && !status.isEmpty()) {
+            orderSkuQueryWrapper.eq("order_status", status);
         }
 
+        Page<OrderSku> orderSkuPage = new Page<>(page, size);
+        Page<OrderSku> orderSkusPageResult = orderSkuMapper.selectPage(orderSkuPage, orderSkuQueryWrapper);
+        List<OrderSku> orderSkus = orderSkusPageResult.getRecords();
+
         List<OrderSkuVO> categorizedOrders = new ArrayList<>();
+        Map<String, List<OrderSku>> statusMap = new HashMap<>();
+        statusMap.put(status, orderSkus);
 
-
-        statusMap.forEach((status, orders) -> {
+        statusMap.forEach((statusKey, orders) -> {
             OrderSkuVO orderSkuVO = new OrderSkuVO();
-            orderSkuVO.setCategory(getStatusDescription(status));
+            orderSkuVO.setCategory(getStatusDescription(statusKey));
             orderSkuVO.setOrderSkus(orders);
             orderSkuVO.setOrderCount(orders.size());
             categorizedOrders.add(orderSkuVO);
         });
 
-        return Result.ok(categorizedOrders);
+        Page<OrderSkuVO> resultPage = new Page<>(page, size);
+        resultPage.setRecords(categorizedOrders);
+        resultPage.setTotal(orderSkusPageResult.getTotal());
+
+        return Result.ok(resultPage);
     }
 
 
@@ -212,9 +212,9 @@ public class OrderController {
             orderSpuVO.setOrderCount(skus.size());
             categorizedOrders.add(orderSpuVO);
         });
-
         return Result.ok(categorizedOrders);
     }
+
 
 }
 
