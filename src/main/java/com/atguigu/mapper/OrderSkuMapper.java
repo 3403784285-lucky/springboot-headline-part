@@ -18,6 +18,9 @@ public interface OrderSkuMapper extends BaseMapper<OrderSku> {
 
     @Select("select * from order_sku,sku where order_sku.sku_id=sku.sku_id ")
     IPage<OrderSku> selectPreviews(Page<OrderSku>page);
+
+    @Select("select * from order_sku where order_sku.user_id=#{userId} and order_sku.sku_id=#{skuId}")
+    List<OrderSku> selectOrderStatus(int userId, int skuId);
 }
 
 

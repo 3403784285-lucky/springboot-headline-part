@@ -1,6 +1,8 @@
 package com.atguigu.service.impl;
 
 import com.atguigu.mapper.GoodsMapper;
+import com.atguigu.mapper.OrderSkuMapper;
+import com.atguigu.pojo.OrderSku;
 import com.atguigu.utils.Result;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -24,6 +26,9 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment>
     @Autowired(required = false)
     private CommentMapper commentMapper;
 
+    @Autowired(required = false)
+    private OrderSkuMapper orderSkuMapper;
+
     @Override
     public Result initComment(int skuId) {
         QueryWrapper<Comment>queryWrapper=new QueryWrapper<>();
@@ -33,16 +38,25 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment>
 
     @Override
     public Result declareComment(Comment comment) {
-        commentMapper.insert(comment);
-        System.out.println(comment);
-        return Result.ok(comment);
+        //判断用户是否进行购买
+        int userId = comment.getUserId();
+        int houseId = comment.getHouseId();
+        List<OrderSku> list = orderSkuMapper.selectOrderStatus(userId,houseId);
+        boolean hasStatus2 = list.stream()
+                .anyMatch(orderSku -> "2".equals(orderSku.getOrderStatus()));
+        if(hasStatus2){
+            commentMapper.insert(comment);
+            System.out.println(comment);
+            return Result.build(comment,200,"OK");
+        }else {
+            return Result.build(null,200,"FAIL");
+        }
     }
 
     @Override
     public Result replyComment(Comment comment) {
        commentMapper.insert(comment);
         System.out.println(comment);
-
         return Result.ok(comment);
     }
 }
