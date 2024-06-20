@@ -2,11 +2,17 @@ package com.atguigu.controller;
 
 
 import com.atguigu.mapper.OrderSkuMapper;
+import com.atguigu.mapper.SkuMapper;
+import com.atguigu.mapper.SpuMapper;
 import com.atguigu.pojo.OrderSku;
+import com.atguigu.pojo.Sku;
+import com.atguigu.pojo.Spu;
 import com.atguigu.service.OrderSkuService;
+import com.atguigu.service.SpuService;
 import com.atguigu.utils.Result;
 import com.atguigu.vo.AllOrderVO;
 import com.atguigu.vo.OrderSkuVO;
+import com.atguigu.vo.OrderSpuVO;
 import com.atguigu.vo.OrderVO;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +30,13 @@ public class OrderController {
 
     @Autowired(required = false)
     private OrderSkuMapper orderSkuMapper;
+
+    @Autowired(required = false)
+    private SpuMapper spuMapper;
+
+    @Autowired(required = false)
+    private SkuMapper skuMapper;
+
 
     @GetMapping("/getAllOrder")
     public Result<List<OrderVO>> getAllOrder() {
@@ -160,5 +173,48 @@ public class OrderController {
                 return "未知状态";
         }
     }
+
+    /**
+     * 通过 spu 对 sku 分类
+     */
+    @GetMapping("/getOrderBySpu")
+    public Result<List<OrderSpuVO>> getOrderBySpu() {
+        // 查询所有的 Spu
+        List<Spu> spuList = spuMapper.selectList(null);
+
+        QueryWrapper<Sku> skuQueryWrapper = new QueryWrapper<>();
+        skuQueryWrapper.isNotNull("spu_id");
+        // 查询所有的 Sku
+        List<Sku> skuList = skuMapper.selectList(skuQueryWrapper);
+
+        // 根据 Spu 的 houseName 进行分类
+        Map<String, List<Sku>> spuMap = new HashMap<>();
+        for (Spu spu : spuList) {
+            spuMap.put(spu.getHouseName(), new ArrayList<>());
+        }
+
+        // 将 Sku 按照对应的 Spu 进行分类
+        for (Sku sku : skuList) {
+            for (Spu spu : spuList) {
+                if (sku.getSpuId().equals(spu.getSpuId())) {
+                    sku.setHouseName(spu.getHouseName());
+                    spuMap.get(spu.getHouseName()).add(sku);
+                }
+            }
+        }
+
+        // 构建返回对象
+        List<OrderSpuVO> categorizedOrders = new ArrayList<>();
+        spuMap.forEach((houseName, skus) -> {
+            OrderSpuVO orderSpuVO = new OrderSpuVO();
+            orderSpuVO.setCategory(houseName);
+            orderSpuVO.setOrderSkus(skus);
+            orderSpuVO.setOrderCount(skus.size());
+            categorizedOrders.add(orderSpuVO);
+        });
+
+        return Result.ok(categorizedOrders);
+    }
+
 }
 
