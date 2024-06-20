@@ -6,6 +6,7 @@ import com.atguigu.pojo.OrderSku;
 import com.atguigu.service.OrderSkuService;
 import com.atguigu.utils.Result;
 import com.atguigu.vo.AllOrderVO;
+import com.atguigu.vo.OrderSkuVO;
 import com.atguigu.vo.OrderVO;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,7 +96,69 @@ public class OrderController {
 
         return Result.ok(result);
     }
+
+    /***
+     * 获取
+     *  statusMap.put("-1", "已取消");
+     *         statusMap.put("-2", "退款中");
+     *         statusMap.put("-3", "已退款");
+     *         statusMap.put("1", "支付成功");
+     *         statusMap.put("0", "未支付");
+     *         statusMap.put("2", "已完成");
+     *
+     *  这五种订单数据 归类
+     */
+    @GetMapping("/getOrderByStatus")
+    public Result<List<OrderSkuVO>> getOrderByStatus() {
+        List<OrderSku> allOrders = orderSkuMapper.selectList(null);
+
+        Map<String, List<OrderSku>> statusMap = new HashMap<>();
+        statusMap.put("-1", new ArrayList<>());
+        statusMap.put("-2", new ArrayList<>());
+        statusMap.put("-3", new ArrayList<>());
+        statusMap.put("1", new ArrayList<>());
+        statusMap.put("0", new ArrayList<>());
+        statusMap.put("2", new ArrayList<>());
+        Integer count = null;
+        for (OrderSku order : allOrders) {
+            String status = order.getOrderStatus();
+            if (statusMap.containsKey(status)) {
+                statusMap.get(status).add(order);
+            }
+        }
+
+        List<OrderSkuVO> categorizedOrders = new ArrayList<>();
+
+
+        statusMap.forEach((status, orders) -> {
+            OrderSkuVO orderSkuVO = new OrderSkuVO();
+            orderSkuVO.setCategory(getStatusDescription(status));
+            orderSkuVO.setOrderSkus(orders);
+            orderSkuVO.setOrderCount(orders.size());
+            categorizedOrders.add(orderSkuVO);
+        });
+
+        return Result.ok(categorizedOrders);
+    }
+
+
+    private String getStatusDescription(String status) {
+        switch (status) {
+            case "-1":
+                return "已取消";
+            case "-2":
+                return "退款中";
+            case "-3":
+                return "已退款";
+            case "1":
+                return "支付成功";
+            case "0":
+                return "未支付";
+            case "2":
+                return "已完成";
+            default:
+                return "未知状态";
+        }
+    }
 }
-
-
 
