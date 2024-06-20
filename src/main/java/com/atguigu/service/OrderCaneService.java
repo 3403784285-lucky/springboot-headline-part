@@ -30,9 +30,6 @@ public class OrderCaneService  {
 
 
 
-
-
-
     //用于存放需要未支付计时订单
     private final static DelayQueue<OrderAutoEntity> delayQueue = new DelayQueue<>();
 

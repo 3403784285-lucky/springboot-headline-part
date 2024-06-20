@@ -33,6 +33,8 @@ public interface UserService extends IService<User> {
 
     Result userDelete(int orderSkuId);
 
+    Result userUpdate(User user);
+
     Result getAllowance(int userId);
 
     Result pay(int userId, String password, BigDecimal totalPrice,int orderSkuId);

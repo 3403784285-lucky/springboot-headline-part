@@ -218,6 +218,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     @Override
+    public Result userUpdate(User user) {
+        int updatedUser = userMapper.updateById(user);
+        return Result.ok(updatedUser);
+    }
+    @Override
     public Result getAllowance(int userId) {
         User user=userMapper.selectById(userId);
         return  Result.ok(user.getBalance());
