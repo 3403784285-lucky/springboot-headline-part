@@ -2,7 +2,10 @@ package com.atguigu.service;
 
 import com.atguigu.pojo.Focuslist;
 import com.atguigu.utils.Result;
+import com.atguigu.vo.UserHouseFocusRatioVO;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
 * @author zplaz
@@ -16,4 +19,6 @@ public interface FocuslistService extends IService<Focuslist> {
     Result searchFocus(Focuslist focuslist);
 
     Result focused(Focuslist focuslist);
+
+    Result<List<UserHouseFocusRatioVO>> search();
 }

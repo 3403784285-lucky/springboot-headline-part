@@ -1,8 +1,10 @@
 package com.atguigu.service.impl;
 
-import com.atguigu.mapper.GoodsMapper;
+import com.atguigu.mapper.SpuMapper;
+import com.atguigu.pojo.Spu;
 import com.atguigu.utils.Result;
 import com.atguigu.utils.ResultCodeEnum;
+import com.atguigu.vo.UserHouseFocusRatioVO;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.atguigu.pojo.Focuslist;
@@ -10,6 +12,13 @@ import com.atguigu.service.FocuslistService;
 import com.atguigu.mapper.FocuslistMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
 * @author zplaz
@@ -22,6 +31,9 @@ public class FocuslistServiceImpl extends ServiceImpl<FocuslistMapper, Focuslist
 
     @Autowired(required = false)
     FocuslistMapper focuslistMapper;
+
+    @Autowired(required = false)
+    private SpuMapper spuMapper;
 
 
     @Override
@@ -39,6 +51,7 @@ public class FocuslistServiceImpl extends ServiceImpl<FocuslistMapper, Focuslist
         return Result.ok(null);
     }
 
+
     @Override
     public Result searchFocus(Focuslist focuslist) {
         QueryWrapper queryWrapper=new QueryWrapper();
@@ -52,6 +65,37 @@ public class FocuslistServiceImpl extends ServiceImpl<FocuslistMapper, Focuslist
         }
 
     }
+
+
+    @Override
+    public Result<List<UserHouseFocusRatioVO>> search() {
+        List<Focuslist> focusLists = focuslistMapper.selectList(null);
+
+        Map<Integer, Long> focusCountMap = focusLists.stream()
+                .collect(Collectors.groupingBy(Focuslist::getHouseId, Collectors.counting()));
+        long totalFocusCount = focusLists.size();
+        Map<Integer, BigDecimal> focusRatioMap = focusCountMap.entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> BigDecimal.valueOf(entry.getValue() * 100.0  /totalFocusCount)
+                                .setScale(2, RoundingMode.HALF_UP)
+                ));
+
+        List<Spu> spus = spuMapper.selectList(null);
+        Map<Integer, String> houseNameMap = spus.stream()
+                .collect(Collectors.toMap(Spu::getSpuId, Spu::getHouseName));
+        List<UserHouseFocusRatioVO> userHouseFocusRatioVOList = focusRatioMap.entrySet().stream()
+                .map(entry -> {
+                    UserHouseFocusRatioVO vo = new UserHouseFocusRatioVO();
+                    vo.setHouseName(houseNameMap.get(entry.getKey()));
+                    vo.setFocusRatio(entry.getValue().intValue());
+                    return vo;
+                })
+                .collect(Collectors.toList());
+
+        return Result.ok(userHouseFocusRatioVOList);
+    }
+
 }
 
 
