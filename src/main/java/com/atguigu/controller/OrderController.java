@@ -4,17 +4,17 @@ package com.atguigu.controller;
 import com.atguigu.mapper.OrderSkuMapper;
 import com.atguigu.mapper.SkuMapper;
 import com.atguigu.mapper.SpuMapper;
+import com.atguigu.mapper.UserMapper;
 import com.atguigu.pojo.OrderSku;
 import com.atguigu.pojo.Sku;
 import com.atguigu.pojo.Spu;
+import com.atguigu.pojo.User;
 import com.atguigu.service.OrderSkuService;
 import com.atguigu.service.SpuService;
 import com.atguigu.utils.Result;
-import com.atguigu.vo.AllOrderVO;
-import com.atguigu.vo.OrderSkuVO;
-import com.atguigu.vo.OrderSpuVO;
-import com.atguigu.vo.OrderVO;
+import com.atguigu.vo.*;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -38,6 +38,8 @@ public class OrderController {
     @Autowired(required = false)
     private SkuMapper skuMapper;
 
+    @Autowired(required = false)
+    private UserMapper userMapper;
 
     @GetMapping("/getAllOrder")
     public Result<List<OrderVO>> getAllOrder() {
@@ -215,6 +217,66 @@ public class OrderController {
         return Result.ok(categorizedOrders);
     }
 
+
+    /**
+     * 获取指定状态的房屋订单信息
+     */
+    @GetMapping("/getByStatus")
+    public Result<IPage<OrderStatus>> getByStatus(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam("status") String status) {
+
+        QueryWrapper<OrderSku> orderSkuQueryWrapper = new QueryWrapper<>();
+        if (status != null && !status.isEmpty()) {
+            orderSkuQueryWrapper.eq("order_status", status);
+        }
+
+
+        Page<OrderSku> orderSkuPage = new Page<>(page, size);
+        Page<OrderSku> orderSkusPageResult = orderSkuMapper.selectPage(orderSkuPage, orderSkuQueryWrapper);
+        List<OrderSku> orderSkus = orderSkusPageResult.getRecords();
+
+        Map<String, List<OrderSku>> statusMap = new HashMap<>();
+        statusMap.put(status, orderSkus);
+        List<OrderStatus> orderStatusList = new ArrayList<>();
+
+        for (OrderSku orderSku : orderSkusPageResult.getRecords()) {
+            OrderStatus orderStatus = new OrderStatus();
+            orderStatus.setOrderSkuId(orderSku.getOrderSkuId());
+            orderStatus.setUserId(orderSku.getUserId());
+            orderStatus.setDescription(orderSku.getDescription());
+            orderStatus.setOrderCreateTime(orderSku.getOrderCreateTime());
+            orderStatus.setStatus(getStatusDescription(orderSku.getOrderStatus()));
+            Sku sku = skuMapper.selectById(orderSku.getSkuId());
+            if (sku != null) {
+                orderStatus.setHousePic(sku.getHousePic());
+            }
+
+
+            Spu spu = spuMapper.selectById(sku.getSpuId());
+            if (spu != null) {
+                orderStatus.setHouseName(spu.getHouseName());
+            }
+
+
+            User user = userMapper.selectById(orderSku.getUserId());
+            if (user != null) {
+                orderStatus.setNickname(user.getNickname());
+            }
+
+            orderStatusList.add(orderStatus);
+        }
+
+
+        Page<OrderStatus> orderStatusPage = new Page<>(page, size);
+        orderStatusPage.setRecords(orderStatusList);
+        orderStatusPage.setCurrent(orderSkusPageResult.getCurrent());
+        orderStatusPage.setSize(orderSkusPageResult.getSize());
+        orderStatusPage.setTotal(orderSkusPageResult.getTotal());
+
+        return Result.ok(orderStatusPage);
+    }
 
 }
 
