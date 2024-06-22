@@ -53,8 +53,8 @@ public class UserController {
 
 
     @PostMapping("login")
-    public Result login(@RequestBody Map map){
-        Result result = userService.login(Long.parseLong((String) map.get("id")),(String) map.get("password"));
+    public Result login(@RequestBody Map map) {
+        Result result = userService.login(Long.parseLong((String) map.get("id")), (String) map.get("password"));
         return result;
     }
 //    @GetMapping("getUserInfo")
@@ -64,147 +64,148 @@ public class UserController {
 //    }
 
     @PostMapping("getConfirm")
-    public  Result getConfirm(@RequestBody Map map){
-        Result result=userService.getConfirm(javaMailSender,(String) map.get("email"));
+    public Result getConfirm(@RequestBody Map map) {
+        Result result = userService.getConfirm(javaMailSender, (String) map.get("email"));
         return result;
 
     }
 
-//    @PostMapping("checkUserName")
+    //    @PostMapping("checkUserName")
 //    public Result checkUserName(String username){
 //        Result result = userService.checkUserName(username);
 //        return result;
 //    }
     @PostMapping("regist")
-    public Result regist(@RequestBody Map map){
+    public Result regist(@RequestBody Map map) {
         System.out.println(map.get("password"));
-        Result result = userService.regist((String) map.get("email"),(String)map.get("password"),(String)map.get("rePassword"),(String)map.get("confirm"));
+        Result result = userService.regist((String) map.get("email"), (String) map.get("password"), (String) map.get("rePassword"), (String) map.get("confirm"));
         return result;
     }
 
     @PostMapping("focus")
-        public Result focus(@RequestBody Focuslist focuslist){
-            System.out.println(focuslist);
-            Result result = focuslistService.focus(focuslist);
-            return result;
-        }
-
-        @PostMapping("focused")
-        public Result focused(@RequestBody Focuslist focuslist){
-            System.out.println(focuslist);
-            Result result = focuslistService.focused(focuslist);
-            return result;
-        }
-
-        @PostMapping("searchFocus")
-        public Result searchFocus(@RequestBody Focuslist focuslist){
-            System.out.println(focuslist);
-            Result result = focuslistService.searchFocus(focuslist);
-            return result;
-        }
-
-        @PostMapping("searchUnPay")
-        public Result searchUnPay(@RequestBody Map map){
-            Integer userId=(Integer) map.get("userId");
-            Result result = otherService.searchUnPay(userId);
-            return result;
-        }
-
-                @PostMapping("doing")
-                public Result searchDoing(@RequestBody Map map){
-                    Integer userId=(Integer) map.get("userId");
-                    Result result = otherService.searchDoing(userId);
-                    return result;
-                }
-
-                @PostMapping("finish")
-                public Result searchFinish(@RequestBody Map map){
-                    Integer userId=(Integer) map.get("userId");
-                    Result result = otherService.searchFinish(userId);
-                    return result;
-                }
-
-                @PostMapping("return")
-                public Result userReturn(@RequestBody OrderSku orderSku){
-                    System.out.println(orderSku);
-                    Result result = userService.userReturn(orderSku);
-                    return result;
-                }
-
-                @PostMapping("delete")
-                public Result userDelete(@RequestBody OrderSku orderSku){
-                    System.out.println(orderSku);
-                    int orderSkuId=orderSku.getOrderSkuId();
-                    Result result = userService.userDelete(orderSkuId);
-                    return result;
-                }
-
-    @PostMapping("cancelOrder")
-    public Result cancelOrder(@RequestBody Map map){
-        Integer orderSkuId=(Integer) map.get("orderSkuId");
-        Result result = orderSkuService.cancelOrder(orderSkuId+"");
+    public Result focus(@RequestBody Focuslist focuslist) {
+        System.out.println(focuslist);
+        Result result = focuslistService.focus(focuslist);
         return result;
     }
-                //获取用户余额
-                @PostMapping("allowance")
-                public Result getAllowance(@RequestBody Map map){
-                    int userId=(int)map.get("userId");
-                    Result result = userService.getAllowance(userId);
-                    return result;
-                }
+
+    @PostMapping("focused")
+    public Result focused(@RequestBody Focuslist focuslist) {
+        System.out.println(focuslist);
+        Result result = focuslistService.focused(focuslist);
+        return result;
+    }
+
+    @PostMapping("searchFocus")
+    public Result searchFocus(@RequestBody Focuslist focuslist) {
+        System.out.println(focuslist);
+        Result result = focuslistService.searchFocus(focuslist);
+        return result;
+    }
+
+    @PostMapping("searchUnPay")
+    public Result searchUnPay(@RequestBody Map map) {
+        Integer userId = (Integer) map.get("userId");
+        Result result = otherService.searchUnPay(userId);
+        return result;
+    }
+
+    @PostMapping("doing")
+    public Result searchDoing(@RequestBody Map map) {
+        Integer userId = (Integer) map.get("userId");
+        Result result = otherService.searchDoing(userId);
+        return result;
+    }
+
+    @PostMapping("finish")
+    public Result searchFinish(@RequestBody Map map) {
+        Integer userId = (Integer) map.get("userId");
+        Result result = otherService.searchFinish(userId);
+        return result;
+    }
+
+    @PostMapping("return")
+    public Result userReturn(@RequestBody OrderSku orderSku) {
+        System.out.println(orderSku);
+        Result result = userService.userReturn(orderSku);
+        return result;
+    }
+
+    @PostMapping("delete")
+    public Result userDelete(@RequestBody OrderSku orderSku) {
+        System.out.println(orderSku);
+        int orderSkuId = orderSku.getOrderSkuId();
+        Result result = userService.userDelete(orderSkuId);
+        return result;
+    }
+
+    @PostMapping("cancelOrder")
+    public Result cancelOrder(@RequestBody Map map) {
+        Integer orderSkuId = (Integer) map.get("orderSkuId");
+        Result result = orderSkuService.cancelOrder(orderSkuId + "");
+        return result;
+    }
+
+    //获取用户余额
+    @PostMapping("allowance")
+    public Result getAllowance(@RequestBody Map map) {
+        int userId = (int) map.get("userId");
+        Result result = userService.getAllowance(userId);
+        return result;
+    }
 
 
-                @PostMapping("pay")
-                public Result toPay(@RequestBody Map map){
-                    System.out.println("dfdsf");
-                    System.out.println("map = " + map.get("orderSkuId"));
-                    Result result = userService.pay((int)map.get("userId"),(String) map.get("password"),new BigDecimal((int)map.get("totalPrice")),(int)map.get("orderSkuId"));
-                    return result;
-                }
+    @PostMapping("pay")
+    public Result toPay(@RequestBody Map map) {
+        System.out.println("dfdsf");
+        System.out.println("map = " + map.get("orderSkuId"));
+        Result result = userService.pay((int) map.get("userId"), (String) map.get("password"), new BigDecimal((int) map.get("totalPrice")), (int) map.get("orderSkuId"));
+        return result;
+    }
 
 
-
-                @PostMapping("manage")
-                public Result manageUser(@RequestBody Map map){
-                    Result result = userService.manageUser(new Page<User>((int)map.get("page"),4));
-                    return result;
-                }
+    @PostMapping("manage")
+    public Result manageUser(@RequestBody Map map) {
+        Result result = userService.manageUser(new Page<User>((int) map.get("page"), 4));
+        return result;
+    }
 
     /**
      * 冻结用户
      */
     @PostMapping("freeze")
-    public Result freeze(@RequestBody Map map){
-        Result result = userService.freeze((int)map.get("userId"));
+    public Result freeze(@RequestBody Map map) {
+        Result result = userService.freeze((int) map.get("userId"));
         return result;
     }
 
     @PostMapping("unfreeze")
-    public Result unfreeze(@RequestBody Map map){
-        Result result = userService.unfreeze((int)map.get("userId"));
+    public Result unfreeze(@RequestBody Map map) {
+        Result result = userService.unfreeze((int) map.get("userId"));
         return result;
     }
 
     //退款函数
     @PostMapping("returnMoney")
-    public Result returnMoney(@RequestBody OrderSku orderSku){
-        Result result = userService. userReturnApplied(orderSku);
+    public Result returnMoney(@RequestBody OrderSku orderSku) {
+        Result result = userService.userReturnApplied(orderSku);
         return result;
     }
 
     //查询用户的所有订单
     @PostMapping("askOrder")
-    public Result askOrder(@RequestBody Map map){
-        Result result = orderSkuService. askOrder((int)map.get("userId"));
+    public Result askOrder(@RequestBody Map map) {
+        Result result = orderSkuService.askOrder((int) map.get("userId"));
         return result;
     }
 
     //搜索已取消或者已经退款的订单
     @PostMapping("cancel")
-    public Result getCancel(@RequestBody Map map){
-        Result result = otherService.getCancel((int)map.get("userId"));
+    public Result getCancel(@RequestBody Map map) {
+        Result result = otherService.getCancel((int) map.get("userId"));
         return result;
     }
+
     @PutMapping("updateInfo")
     public Result updateById(@RequestBody User user) {
         userService.updateById(user);
@@ -213,6 +214,7 @@ public class UserController {
 
     /**
      * 修改个人信息
+     *
      * @param file
      * @param userId
      * @param nickname
@@ -253,9 +255,20 @@ public class UserController {
         }
     }
 
-
-
-
-
-
+    /**
+     * 获取用户状态，1为管理员，0为普通用户
+     *
+     * @param map 包含用户ID的映射
+     * @return 包含用户状态的结果对象
+     */
+    @PostMapping("/status")
+    public Result getUserStatus(@RequestBody Map<String, Object> map) {
+        //若返回的类型是字符串，则为用户未登录的情况
+        if (map.get("userId") instanceof String) {
+            return Result.build(null, 0, "未登录");
+        } else {
+            int userId = (int) map.get("userId");
+            return userService.getStatus(userId);
+        }
+    }
 }
