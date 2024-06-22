@@ -60,7 +60,7 @@ mybatis-plus:
 #jwt配置
 jwt:
   token:
-    tokenExpiration: 60 #有效时间,单位分钟
+    tokenExpiration: 200000 #有效时间,单位分钟
     tokenSignKey: headline123456  #当前程序签名秘钥 自定义
 
 
