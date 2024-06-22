@@ -5,6 +5,7 @@ import com.atguigu.mapper.OrderSkuMapper;
 import com.atguigu.pojo.OrderSku;
 import com.atguigu.utils.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -145,24 +146,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
      */
 
     @Override
-    public Result regist(String email,String password,String rePassword,String confirm) {
+    public Result regist(String email, String password, String rePassword, String confirm) {
+        if (UtilStorage.confirm == null || !UtilStorage.confirm.equals(confirm)) {
+            return Result.build(null, ResultCodeEnum.CONFIRM_ERROR);
+        }
 
-        User user=new User();
-        System.out.println(confirm);
-
-        if (UtilStorage.confirm==null||!UtilStorage.confirm.equals(confirm))
-            return Result.build(null,ResultCodeEnum.CONFIRM_ERROR);;
-
+        User user = new User();
         user.setPassword(MD5Util.encrypt(password));
         user.setEmail(email);
         user.setStatus("0");
 
-
-
         userMapper.insert(user);
 
-        return Result.ok(null);
+        return Result.ok(user);
     }
+
+
+
 
     @Override
     public Result getConfirm(JavaMailSender javaMailSender, String email) {

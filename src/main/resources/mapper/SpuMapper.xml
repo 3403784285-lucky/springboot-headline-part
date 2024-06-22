@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.mapper.SpuMapper">
+
+    <resultMap id="BaseResultMap" type="com.atguigu.pojo.Spu">
+            <id property="spuId" column="spu_id" jdbcType="INTEGER"/>
+            <result property="houseName" column="house_name" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        spu_id,house_name
+    </sql>
+</mapper>
