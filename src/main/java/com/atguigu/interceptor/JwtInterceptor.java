@@ -27,7 +27,7 @@ public class JwtInterceptor implements HandlerInterceptor {
 
         if (token == null ) {
             System.out.println("无权限");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write("{\"message\": \"无权限\"}");
@@ -38,7 +38,7 @@ public class JwtInterceptor implements HandlerInterceptor {
 
         if (jwtHelper.isExpiration(token)) {
             System.out.println("token无效或已过期");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write("{\"message\": \"token无效或已过期\"}");
