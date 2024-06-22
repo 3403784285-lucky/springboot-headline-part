@@ -47,5 +47,7 @@ public interface UserService extends IService<User> {
 
     Result userReturnApplied(OrderSku orderSku);
 
+    Result getStatus(int userId);
+
 
 }

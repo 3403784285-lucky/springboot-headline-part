@@ -291,8 +291,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         return Result.ok(null);
     }
 
-
-
+    @Override
+    public Result getStatus(int userId) {
+        User user=userMapper.selectById(userId);
+        return Result.ok(user.getStatus());
+    }
 
 }
 
