@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
@@ -30,4 +31,13 @@ public class OrderStatus implements Serializable {
     //创建时间
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date orderCreateTime;
+
+    // 价格
+    private BigDecimal totalPrice;
+
+    // sku_id
+    private Integer skuId;
+
+    // 用户头像
+    private String userPic;
 }

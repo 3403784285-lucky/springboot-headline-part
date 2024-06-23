@@ -8,6 +8,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -35,6 +37,7 @@ public class OrderSku implements Serializable {
 
     private  Integer userId;
 
+    // 订单状态
     private  String orderStatus;
 
     @TableField(exist = false)

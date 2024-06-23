@@ -79,6 +79,7 @@ public class HouseController {
 
     @PostMapping("certain")
     public Result houseCertain(@RequestBody Map map){
+        System.out.println("map = " + map);
         int skuId=(Integer)map.get("skuId");
         Result result = skuService.houseCertain(skuId);
         return result;

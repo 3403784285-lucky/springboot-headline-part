@@ -245,15 +245,15 @@ public class OrderController {
             OrderStatus orderStatus = new OrderStatus();
             orderStatus.setOrderSkuId(orderSku.getOrderSkuId());
             orderStatus.setUserId(orderSku.getUserId());
+            orderStatus.setTotalPrice(orderSku.getTotalPrice());
             orderStatus.setDescription(orderSku.getDescription());
             orderStatus.setOrderCreateTime(orderSku.getOrderCreateTime());
-            orderStatus.setStatus(getStatusDescription(orderSku.getOrderStatus()));
+            orderStatus.setStatus(orderSku.getOrderStatus());
+            orderStatus.setSkuId(orderSku.getSkuId());
             Sku sku = skuMapper.selectById(orderSku.getSkuId());
             if (sku != null) {
                 orderStatus.setHousePic(sku.getHousePic());
             }
-
-
             Spu spu = spuMapper.selectById(sku.getSpuId());
             if (spu != null) {
                 orderStatus.setHouseName(spu.getHouseName());
@@ -263,6 +263,7 @@ public class OrderController {
             User user = userMapper.selectById(orderSku.getUserId());
             if (user != null) {
                 orderStatus.setNickname(user.getNickname());
+                orderStatus.setUserPic(user.getUserPic());
             }
 
             orderStatusList.add(orderStatus);
